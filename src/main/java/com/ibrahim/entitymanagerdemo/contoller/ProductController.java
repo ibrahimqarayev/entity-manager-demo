@@ -19,13 +19,5 @@ public class ProductController {
         return productService.findAll();
     }
 
-    @GetMapping("/{id}")
-    public Product getById(@PathVariable int id) {
-        return productService.findById(id);
-    }
 
-    @GetMapping("/{name}")
-    public Product getByName(@PathVariable String name) {
-        return productService.findByName(name);
-    }
 }
