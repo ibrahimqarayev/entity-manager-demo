@@ -1,1 +1,1 @@
-# entity-manager-demo
+# EntityManager test
