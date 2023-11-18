@@ -33,4 +33,11 @@ public class ProductRepository {
         return Optional.ofNullable(product);
     }
 
+    public List<Product> findByBrand(String brand) {
+        String jpql = "SELECT p FROM Product p WHERE p.brand =:brand";
+        TypedQuery<Product> query = entityManager.createQuery(jpql, Product.class);
+        query.setParameter("brand", brand);
+        return query.getResultList();
+    }
+
 }
