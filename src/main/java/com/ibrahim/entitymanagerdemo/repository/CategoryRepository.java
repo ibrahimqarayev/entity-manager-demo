@@ -2,6 +2,7 @@ package com.ibrahim.entitymanagerdemo.repository;
 
 import com.ibrahim.entitymanagerdemo.domain.Category;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import org.springframework.stereotype.Repository;
@@ -25,16 +26,25 @@ public class CategoryRepository {
         String jpql = "SELECT c FROM Category c WHERE c.id =:id";
         TypedQuery<Category> query = entityManager.createQuery(jpql, Category.class);
         query.setParameter("id", id);
-        Category category = query.getSingleResult();
-        return Optional.ofNullable(category);
+        try {
+            Category category = query.getSingleResult();
+            return Optional.of(category);
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
     }
 
     public Optional<Category> findByName(String name) {
         String jpql = "SELECT c FROM Category c WHERE c.name =:name";
         TypedQuery<Category> query = entityManager.createQuery(jpql, Category.class);
         query.setParameter("name", name);
-        Category category = query.getSingleResult();
-        return Optional.of(category);
+        try {
+            Category category = query.getSingleResult();
+            return Optional.of(category);
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
     }
+
 
 }

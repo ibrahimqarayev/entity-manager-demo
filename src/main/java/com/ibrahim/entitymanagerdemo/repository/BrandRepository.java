@@ -2,6 +2,7 @@ package com.ibrahim.entitymanagerdemo.repository;
 
 import com.ibrahim.entitymanagerdemo.domain.Brand;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import org.springframework.stereotype.Repository;
@@ -24,16 +25,24 @@ public class BrandRepository {
         String jpql = "SELECT b FROM Brand b WHERE b.id =:id";
         TypedQuery<Brand> query = entityManager.createQuery(jpql, Brand.class);
         query.setParameter("id", id);
-        Brand brand = query.getSingleResult();
-        return Optional.ofNullable(brand);
+        try {
+            Brand brand = query.getSingleResult();
+            return Optional.of(brand);
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
     }
 
     public Optional<Brand> findByName(String name) {
         String jpql = "SELECT b FROM Brand b WHERE b.name =:name";
         TypedQuery<Brand> query = entityManager.createQuery(jpql, Brand.class);
         query.setParameter("name", name);
-        Brand brand = query.getSingleResult();
-        return Optional.ofNullable(brand);
+        try {
+            Brand brand = query.getSingleResult();
+            return Optional.of(brand);
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
     }
 
 }
