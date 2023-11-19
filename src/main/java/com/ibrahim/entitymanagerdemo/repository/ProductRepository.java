@@ -2,9 +2,11 @@ package com.ibrahim.entitymanagerdemo.repository;
 
 import com.ibrahim.entitymanagerdemo.domain.Product;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -15,6 +17,13 @@ public class ProductRepository {
     @PersistenceContext
     private EntityManager entityManager;
 
+
+    @Transactional
+    public Product save(Product product) {
+        entityManager.persist(product);
+        return product;
+    }
+
     public List<Product> findAll() {
         String jpql = "SELECT p FROM Product p";
         TypedQuery<Product> query = entityManager.createQuery(jpql, Product.class);
@@ -22,16 +31,24 @@ public class ProductRepository {
     }
 
     public Optional<Product> findById(int id) {
-        Product product = entityManager.find(Product.class, id);
-        return Optional.ofNullable(product);
+        try {
+            Product product = entityManager.find(Product.class, id);
+            return Optional.of(product);
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
     }
 
     public Optional<Product> findByName(String name) {
         String jpql = "SELECT p FROM Product p.name =:name";
         TypedQuery<Product> query = entityManager.createQuery(jpql, Product.class);
         query.setParameter("name", name);
-        Product product = query.getSingleResult();
-        return Optional.ofNullable(product);
+        try {
+            Product product = query.getSingleResult();
+            return Optional.of(product);
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
     }
 
     public List<Product> findByBrand(String brandName) {
