@@ -17,5 +17,4 @@ public class UpdateProductRequest {
     private String description;
     private String categoryName;
     private String brandName;
-    private int stockQuantity;
 }

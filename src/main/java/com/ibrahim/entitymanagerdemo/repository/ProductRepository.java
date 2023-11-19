@@ -1,10 +1,7 @@
 package com.ibrahim.entitymanagerdemo.repository;
 
 import com.ibrahim.entitymanagerdemo.domain.Product;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.NoResultException;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.TypedQuery;
+import jakarta.persistence.*;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,11 +14,20 @@ public class ProductRepository {
     @PersistenceContext
     private EntityManager entityManager;
 
-
     @Transactional
     public Product save(Product product) {
         entityManager.persist(product);
         return product;
+    }
+
+    @Transactional
+    public Product update(Product product) {
+        return entityManager.merge(product);
+    }
+
+    @Transactional
+    public void delete(Product product) {
+        entityManager.remove(product);
     }
 
     public List<Product> findAll() {

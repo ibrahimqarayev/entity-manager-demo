@@ -20,9 +20,8 @@ public class BrandService {
         return conversionService.toBrandResponseList(brands);
     }
 
-    public BrandResponse findByName(String name) {
-        Brand brand = brandRepository.findByName(name)
+    protected Brand findByName(String name) {
+        return brandRepository.findByName(name)
                 .orElseThrow(() -> new ResourceNotFoundException("Brand not found with name: " + name));
-        return conversionService.toBrandResponse(brand);
     }
 }
