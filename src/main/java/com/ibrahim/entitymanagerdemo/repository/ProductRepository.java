@@ -45,6 +45,20 @@ public class ProductRepository {
         }
     }
 
+    public List<Product> findByCategory(String categoryName) {
+        String jpql = "SELECT p FROM Product p WHERE p.category.name =:categoryName";
+        TypedQuery<Product> query = entityManager.createQuery(jpql, Product.class);
+        query.setParameter("categoryName", categoryName);
+        return query.getResultList();
+    }
+
+    public List<Product> findByNameLike(String name) {
+        String jpql = "SELECT p FROM Product p WHERE p.name LIKE :name";
+        TypedQuery<Product> query = entityManager.createQuery(jpql, Product.class);
+        query.setParameter("name", name + "%");
+        return query.getResultList();
+    }
+
     public Optional<Product> findByName(String name) {
         String jpql = "SELECT p FROM Product p.name =:name";
         TypedQuery<Product> query = entityManager.createQuery(jpql, Product.class);
@@ -74,19 +88,13 @@ public class ProductRepository {
         return query.getResultList();
     }
 
-    public List<Product> findProductsByNameStartsWith(String prefix) {
-        String jpql = "SELECT p FROM Product p WHERE p.name LIKE :prefix%";
-        TypedQuery<Product> query = entityManager.createQuery(jpql, Product.class);
-        query.setParameter("prefix", prefix);
-        return query.getResultList();
-    }
 
     public List<Product> findProductsByNameStartsWithAndCategory(String prefix, String categoryName) {
         String jpql = "SELECT p FROM Product p " +
                 "WHERE p.name LIKE :prefix% " +
                 "AND p.category.name =:categoryName";
         TypedQuery<Product> query = entityManager.createQuery(jpql, Product.class);
-        query.setParameter("prefix", prefix);
+        query.setParameter("prefix", prefix + "%");
         query.setParameter("categoryName", categoryName);
         return query.getResultList();
     }
@@ -97,26 +105,38 @@ public class ProductRepository {
                 "AND p.category.name =:categoryName " +
                 "AND p.brand.name =:brandName";
         TypedQuery<Product> query = entityManager.createQuery(jpql, Product.class);
-        query.setParameter("prefix", prefix);
+        query.setParameter("prefix", prefix + "%");
         query.setParameter("categoryName", categoryName);
         query.setParameter("brandName", brandName);
         return query.getResultList();
     }
 
-    public long countAllProducts() {
+    public List<Product> sortByStockQuantityToHigh() {
+        String jpql = "SELECT p FROM Product p ORDER BY p.stockQuantity ASC";
+        TypedQuery<Product> query = entityManager.createQuery(jpql, Product.class);
+        return query.getResultList();
+    }
+
+    public List<Product> sortByStockQuantityToLow() {
+        String jpql = "SELECT p FROM Product p ORDER BY p.stockQuantity DESC";
+        TypedQuery<Product> query = entityManager.createQuery(jpql, Product.class);
+        return query.getResultList();
+    }
+
+    public int countAllProducts() {
         String jpql = "SELECT COUNT(p) FROM Product p";
-        TypedQuery<Long> query = entityManager.createQuery(jpql, Long.class);
+        TypedQuery<Integer> query = entityManager.createQuery(jpql, Integer.class);
         return query.getSingleResult();
     }
 
     public List<Product> sortByPriceHighToLow() {
-        String jpql = "SELECT p FROM Product p WHERE p.price DESC";
+        String jpql = "SELECT p FROM Product p ORDER BY p.price DESC";
         TypedQuery<Product> query = entityManager.createQuery(jpql, Product.class);
         return query.getResultList();
     }
 
     public List<Product> sortByPriceLowToHigh() {
-        String jpql = "SELECT p FROM Product p WHERE p.price ASC";
+        String jpql = "SELECT p FROM Product p ORDER BY p.price ASC";
         TypedQuery<Product> query = entityManager.createQuery(jpql, Product.class);
         return query.getResultList();
     }
@@ -143,4 +163,15 @@ public class ProductRepository {
         return query.getResultList();
     }
 
+    public List<Product> findProductsByCategoryAndBrandAndPriceRange(String categoryName, String brandName,
+                                                                     BigDecimal minPrice, BigDecimal maxPrice) {
+        String jpql = "SELECT p FROM Product p " +
+                "WHERE p.category.name =:categoryName " +
+                "AND p.brand.name =:brandName " +
+                "AND p.price BETWEEN :minPrice AND :maxPrice";
+        TypedQuery<Product> query = entityManager.createQuery(jpql, Product.class);
+        query.setParameter("categoryName", categoryName);
+        query.setParameter("brandName", brandName);
+        return query.getResultList();
+    }
 }
