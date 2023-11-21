@@ -37,6 +37,11 @@ public class ProductService {
         return conversionService.toProductResponseList(products);
     }
 
+    public List<ProductResponse> findProductsByStockThreshold(int stockThreshold) {
+        List<Product> products = productRepository.findProductsByStockThreshold(stockThreshold);
+        return conversionService.toProductResponseList(products);
+    }
+
     protected Product findByName(String name) {
         return productRepository.findByName(name).orElseThrow();
     }

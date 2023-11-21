@@ -14,6 +14,7 @@ public class ProductRepository {
     @PersistenceContext
     private EntityManager entityManager;
 
+
     @Transactional
     public Product save(Product product) {
         entityManager.persist(product);
@@ -43,6 +44,13 @@ public class ProductRepository {
         } catch (NoResultException e) {
             return Optional.empty();
         }
+    }
+
+    public List<Product> findProductsByStockThreshold(int stockThreshold) {
+        StoredProcedureQuery query = entityManager.createStoredProcedureQuery("FindProductsByStockThreshold", Product.class);
+        query.registerStoredProcedureParameter("stockThreshold", Integer.class, ParameterMode.IN);
+        query.setParameter("stockThreshold", stockThreshold);
+        return query.getResultList();
     }
 
     public List<Product> findByCategory(String categoryName) {
